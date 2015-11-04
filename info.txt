@@ -1,0 +1,95 @@
+1. editor/ node(cmd) 전부 관리자 모드로 실행
+
+2. npm install
+
+3. npm install sails(local install)
+
+4. [less 경로 변경 asset/styles => asset/css]
+
+(4.1)
+\amoreEsalesMobile\node_modules\sails\node_modules\sails-generate\node_modules\sails-generate-frontend\lib\index.js:
+   22      './assets/images': { folder: {} },
+   23      './assets/styles': { folder: {} },
+   24:     './assets/styles/importer.less': { template: 'assets/styles/importer.less' },
+   25      './assets/templates': { folder: {} },
+   26      './assets/js': { folder: {} },
+
+       // './assets/styles': { folder: {} },
+    // './assets/styles/importer.less': { template: 'assets/styles/importer.less' },
+    './assets/css': { folder: {} },
+    './assets/css/importer.less': { template: 'assets/css/importer.less' },
+
+(4.2) tasks/pipeline.js 수정 (이미 변환작업 완료)
+var cssFilesToInject = [
+  'css/**/*.css'
+];
+
+
+
+
+5. ejs => jsp rendering되게 수정 (if의 맨 아래 두줄 추가)
+[node_modules\sails\lib\hooks\http\initialize.js] 57행
+
+// Configure views if hook enabled
+        if (sails.hooks.views) {
+
+            sails.after('hook:views:loaded', function() {
+                var View = require('./view');
+
+                // Use View subclass to allow case-insensitive view lookups
+                sails.hooks.http.app.set('view', View);
+
+                // Set up location of server-side views and their engine
+                sails.hooks.http.app.set('views', sails.config.paths.views);
+
+                // Teach Express how to render templates w/ our configured view extension
+                app.engine(sails.config.views.engine.ext, sails.config.views.engine.fn);
+
+                // Set default view engine
+                sails.log.verbose('Setting default Express view engine to ' + sails.config.views.engine.ext + '...');
+                sails.hooks.http.app.set('view engine', sails.config.views.engine.ext);
+
+                sails.hooks.http.app.set('view engine', 'jsp'); // so you can render('index')
+                sails.hooks.http.app.engine('jsp', sails.config.views.engine.fn);
+            });
+        }
+
+
+
+
+
+개발중 참고사항:::
+
+(2.1) * 이건 less추가시에만 src에 추가, 최초 셋팅때는 필요없다. (이미 변환작업 완료)
+tasks/config/less.js
+
+module.exports = function(grunt) {
+
+  grunt.config.set('less', {
+    dev: {
+      files: [{
+        expand: true,
+        // cwd: 'assets/styles/',
+        cwd: 'assets/css/',
+        src: ['importer.less'],
+        // dest: '.tmp/public/styles/',
+        dest: '.tmp/public/css/',
+        ext: '.css'
+      }]
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-contrib-less');
+};
+
+
+(2.2) angular.min.js FIX BUG, 최초 셋팅때는 필요없다. (이미 변환작업 완료)
+fromJson을 아래부분같이 수정
+function fromJson(json) {
+  if(isString(json)===true && json==='') json='{}';
+  return (isString(json)===true) ? (JSON.parse(json)):(json);
+}
+
+
+
+

@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html ng-app="TestApp">
+  <head>
+    <title>Grunt Test Mobile</title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--  
+        Stylesheets and Preprocessors
+        ==============================
+
+        You can always bring in CSS files manually with `<link>` tags, or asynchronously
+        using a solution like AMD (RequireJS).  Or, if you like, you can take advantage 
+        of Sails' conventional asset pipeline (boilerplate Gruntfile).
+
+        By default, stylesheets from your `assets/styles` folder are included
+        here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
+        are supported. In production, your styles will be minified and concatenated into
+        a single file.
+        
+        To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
+        For example, here are a few things you could do:
+            
+            + Change the order of your CSS files
+            + Import stylesheets from other directories
+            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
+    -->
+
+    <!--STYLES-->
+    
+    <!--STYLES END-->
+  </head>
+
+  <!-- 
+	TODO
+	1. SAILS-LINKER => js 우선순위 binding
+
+	2. MULTIFUL CONCAT
+
+   -->
+
+  <body ng-controller="TestAppMobile.controller.TestAppMobileCtrl as TestAppMobileCtrl">
+    
+	<div id="wrapper" ng-cloak>
+		<h3>TITLE: <span ng-bind="TestAppMobileCtrl.title"></span></h3>
+		<input type="text" ng-model="TestAppMobileCtrl.title" />
+		<input type="button" value="reset-title" ng-click="TestAppMobileCtrl.resetTitle()" />
+		<h4 style="color:red;">{{TestAppMobileCtrl.title | addYap}}</h4>
+	</div>
+
+
+
+    <!--
+
+      Client-side Javascript
+      ========================
+
+      You can always bring in JS files manually with `script` tags, or asynchronously
+      on the client using a solution like AMD (RequireJS).  Or, if you like, you can 
+      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
+
+      By default, files in your `assets/js` folder are included here
+      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
+      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
+      and concatenated into a single file.
+      
+      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
+      For example, here are a few things you could do:
+          
+          + Change the order of your scripts
+          + Import scripts from other directories
+          + Use a different preprocessor, like TypeScript
+
+    -->
+
+    <!--SCRIPTS MOBILE-->
+    <script src="/min/production.mobile.min.js"></script>
+    <!--SCRIPTS MOBILE END-->
+
+  </body>
+</html>
+

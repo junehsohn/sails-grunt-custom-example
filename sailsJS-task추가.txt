@@ -1,0 +1,82 @@
+1. pipeline.js
+1.1 custom inject할 path 설정
+
+
+2. salis-linker.js
+ 2.1 custom inject할 path를 이용, 원하는 task추가 (dev, prod)
+		devJsMobile: {
+			options: {
+				startTag: '<!--SCRIPTS MOBILE-->',
+				endTag: '<!--SCRIPTS MOBILE END-->',
+				fileTmpl: '<script src="%s"></script>',
+				appRoot: '.tmp/public'
+			},
+			files: {
+				'.tmp/public/**/*.html': require('../pipeline').jsCustomMobileFilesToInject,
+				'views/**/*.html': require('../pipeline').jsCustomMobileFilesToInject,
+				'views/**/*.ejs': require('../pipeline').jsCustomMobileFilesToInject
+			}
+		},
+
+		prodJsMobile: {
+			options: {
+				startTag: '<!--SCRIPTS MOBILE-->',
+				endTag: '<!--SCRIPTS MOBILE END-->',
+				fileTmpl: '<script src="%s"></script>',
+				appRoot: '.tmp/public'
+			},
+			files: {
+				'.tmp/public/**/*.html': ['.tmp/public/min/production.mobile.min.js'],
+				'views/**/*.html': ['.tmp/public/min/production.mobile.min.js'],
+				'views/**/*.ejs': ['.tmp/public/min/production.mobile.min.js']
+			}
+		},
+
+ 2.2 ejs, html에 해당 startTag, endTag를 삽입
+
+3 linkAssets.js, prod.js에 'sails-linker'에 추가한 task를 setup
+
+4 concat 설정
+
+	module.exports = function(grunt) {
+
+		grunt.config.set('concat', {
+			js: {
+				src: require('../pipeline').jsCustomFilesToInject,
+				dest: '.tmp/public/concat/production.js'
+			},
+			jsMobile: {
+				src: require('../pipeline').jsCustomMobileFilesToInject,
+				dest: '.tmp/public/concat/production.mobile.js'
+			},
+			css: {
+				src: require('../pipeline').cssFilesToInject,
+				dest: '.tmp/public/concat/production.css'
+			}
+		});
+
+		grunt.loadNpmTasks('grunt-contrib-concat');
+	};
+
+
+5 uglify 설정
+	module.exports = function(grunt) {
+
+		grunt.config.set('uglify', {
+			my_target: {
+				options: {
+				mangle: false
+			},
+			    files: {
+					'.tmp/public/min/production.min.js': ['.tmp/public/concat/production.js'],
+					'.tmp/public/min/production.mobile.min.js': ['.tmp/public/concat/production.mobile.js']
+				}
+		    }
+		});
+
+		grunt.loadNpmTasks('grunt-contrib-uglify');
+	};
+
+6. 개발버전 => sails lift
+
+7. deploy => sails lift --prod
